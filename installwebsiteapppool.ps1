@@ -19,3 +19,13 @@ Copy-Item -Path $insidesource* `
     -Recurse
     
 invoke-command -scriptblock {iisreset}
+
+# Creating an Application Pool
+if(!(Test-Path IIS:\AppPools\$insidename))
+{
+    $appPool = New-Item $insidename
+    $appPool | Set-ItemProperty -Name "managedRuntimeVersion" -Value 'v4.0'
+    $appPool | Set-ItemProperty -Name "enable32BitAppOnWin64" -Value $True
+}
+
+Set-ItemProperty iis:\Sites\$insidename -Name applicationpool -Value $insidename
